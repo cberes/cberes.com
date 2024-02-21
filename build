@@ -98,7 +98,6 @@ sub find_pages {
         foreach my $file (readdir $article_dir) {
             next unless $file eq 'index.html';
 
-            # TODO add index.html for template processing
             my $article_index = File::Spec::Functions::catfile($article_path, $file);
 
             my %metadata = &page_metadata($article_index, 'h2');
