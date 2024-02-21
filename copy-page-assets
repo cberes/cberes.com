@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+readonly output_path="$1"
+
+for page in articles/*; do
+  cp $page/*.{png,jpg} $output_path/$page/ 2>/dev/null
+done
