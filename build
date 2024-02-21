@@ -4,6 +4,7 @@ use 5.034;
 use if !$ENV{GITHUB_WORKSPACE}, "local::lib";
 use File::Spec::Functions ();
 use Template;
+use Time::Local qw( timelocal );
 
 my $project_root = $ENV{GITHUB_WORKSPACE} || "$ENV{HOME}/repos/cberes.com";
 
@@ -105,7 +106,7 @@ sub find_pages {
             my %page = (
                 url   => $article_path,
                 title => $metadata{title} || $article_path,
-                date  => $metadata{date} || &default_date(),
+                date  => $metadata{date} || time,
                 index => $article_index,
             );
             push @articles, \%page; 
@@ -114,7 +115,7 @@ sub find_pages {
         closedir $article_dir;
     }
 
-    reverse sort { %$_{date} } @articles
+    reverse sort { $$a{date} <=> $$b{date} } @articles
 }
 
 sub page_metadata {
@@ -137,14 +138,9 @@ sub page_metadata {
     }
 
     # this one's even worse
-    if ($contents =~ m|<\s*(\w+)[^>]*id\s*=\s*"time"[^>]*>\s*(.*?)\s*<\s*/\s*\1\s*>|s) {
-        $metadata{date} = $2;
+    if ($contents =~ m|<\s*(\w+)[^>]*id\s*=\s*"time"[^>]*>\s*(\d+)[-/](\d+)[-/](\d+)\s*<\s*/\s*\1\s*>|s) {
+        $metadata{date} = timelocal(0, 0, 0, $4, $3 - 1, $2);
     }
 
     %metadata
-}
-
-sub default_date {
-    my @time = localtime;
-    sprintf "%04d/%02d/%02d", $time[5] + 1900, $time[4] + 1, $time[3]
 }
