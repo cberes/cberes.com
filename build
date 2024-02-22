@@ -82,6 +82,7 @@ for my $article (@articles) {
     close $article_file;
 }
 
+&build_redirects;
 &build_rss(\@articles, 10);
 
 # copy article assets
@@ -172,6 +173,39 @@ sub page_metadata {
     }
 
     %metadata
+}
+
+sub build_redirects {
+    my %redirect_for = (
+        portfolio => 'https://twentyfifteen.cberes.com/portfolio/',
+        contact => 'https://twentyfifteen.cberes.com/contact/',
+        blog => 'https://twentyfifteen.cberes.com/blog/',
+        'blog/2015-08-31_counting_counties' => 'https://twentyfifteen.cberes.com/blog/2015-08-31_counting_counties',
+        'blog/2015-10-10_bar_chart_with_incanter' => 'https://twentyfifteen.cberes.com/blog/2015-10-10_bar_chart_with_incanter',
+        'blog/2015-10-20_how_to_use_streams_in_java_8' => 'https://twentyfifteen.cberes.com/blog/2015-10-20_how_to_use_streams_in_java_8',
+        'blog/2015-11-30_junit_tips' => 'https://twentyfifteen.cberes.com/blog/2015-11-30_junit_tips',
+        'blog/2017-02-14_static_website_conversion' => 'https://twentyfifteen.cberes.com/blog/2017-02-14_static_website_conversion',
+        'blog/2017-02-15_common_clojure_idioms' => 'https://twentyfifteen.cberes.com/blog/2017-02-15_common_clojure_idioms',
+    );
+
+    my $config = {
+        INCLUDE_PATH => "$project_root/templates",
+        OUTPUT_PATH  => "$project_root/$output_dir",
+        POST_CHOMP   => 1,
+    };
+
+    my $template = Template->new($config);
+
+
+    while (my ($redirect_from, $redirect_to) = each %redirect_for) {
+        my $vars = {
+            title => $root_title,
+            redirect_to => $redirect_to,
+        };
+
+        $template->process('redirect', $vars, "$redirect_from/index.html")
+            or die $template->error();
+    }
 }
 
 sub build_rss {

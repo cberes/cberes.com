@@ -2,8 +2,6 @@
 
 readonly output_path="$1"
 
-cp -r redirects/* $output_path/
-
 cp assets/* $output_path/
 
 for page in articles/*; do
