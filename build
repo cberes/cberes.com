@@ -3,6 +3,7 @@
 use 5.034;
 use if !$ENV{GITHUB_WORKSPACE}, "local::lib";
 use File::Spec::Functions ();
+use List::Util qw( min );
 use Template;
 use Time::Local qw( timelocal );
 
@@ -24,25 +25,39 @@ my $config = {
 my $template = Template->new($config);
 
 # find articles
-my @article_dirs = &directories_in('articles');
+my $max_articles = 5;
+my $article_dir_name = 'articles';
+my @article_dirs = &directories_in($article_dir_name);
 my @articles = &find_pages(\@article_dirs);
+my @first_articles = @articles[0..min($max_articles - 1, $#articles)];
 
 # define template variables for replacement
 my $root_title = 'cberes';
 my $vars = {
     title => $root_title,
-    pages => \@articles,
+    pages => \@first_articles,
+    more_articles => (scalar @articles) > $max_articles,
 };
 
-# specify input filename, or file handle, text reference, etc.
+# root index.html
 my $input = 'index.html';
 my $output = $input;
 
-# process input template, substituting variables
 open my $input_file, '<', $input;
 $template->process($input_file, $vars, $output)
     or die $template->error();
 close $input_file;
+
+# articles index.html
+$$vars{pages} = \@articles; # include all articles
+
+$input = File::Spec::Functions::catfile($article_dir_name, 'index.html');
+$output = $input;
+
+open my $article_input_file, '<', $input;
+$template->process($article_input_file, $vars, $output)
+    or die $template->error();
+close $article_input_file;
 
 # process article templates
 for my $article (@articles) {
@@ -54,7 +69,7 @@ for my $article (@articles) {
         or die "can't open $index: $!";
 
     my $vars = {
-        title => "$root_title | $title",
+        title => "$root_title . $title",
     };
 
     $template->process($article_file, $vars, $index)
@@ -106,6 +121,8 @@ sub find_pages {
                 url   => $article_path,
                 title => $metadata{title} || $article_path,
                 date  => $metadata{date} || time,
+                date_str => $metadata{date_str},
+                summary => $metadata{summary},
                 index => $article_index,
             );
             push @articles, \%page; 
@@ -138,7 +155,14 @@ sub page_metadata {
 
     # this one's even worse
     if ($contents =~ m|<\s*(\w+)[^>]*id\s*=\s*"time"[^>]*>\s*(\d+)[-/](\d+)[-/](\d+)\s*<\s*/\s*\1\s*>|s) {
+        $metadata{date_str} = sprintf "%04d/%02d%02d", $2, $3, $4;
         $metadata{date} = timelocal(0, 0, 0, $4, $3 - 1, $2);
+    }
+
+    if ($contents =~ m|<\s*p[^>]*id\s*=\s*"summary"[^>]*>\s*(.*?)\s*<\s*/\s*p\s*>|s) {
+        $metadata{summary} = $1;
+    } elsif ($contents =~ m|<\s*p(?!\s*id\s*=\s*"time")[^>]*>\s*(.*?)\s*<\s*/\s*p\s*>|s) {
+        $metadata{summary} = $1;
     }
 
     %metadata
