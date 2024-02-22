@@ -1,8 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="utf-8"/>
   <title>[% title %]</title>
   <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss.xml">
+  <meta name="author" content="Corey Beres"/>
+  <meta name="description"
+    content="Personal homepage for Corey Beres. Mostly thoughts about software and skateboards."/>
 </head>
 
 <body>

@@ -20,7 +20,7 @@ jobs:
       - name: Install Perl dependencies
         run: |
           perl -v
-          sudo cpan -i Template::Toolkit
+          sudo cpan -i Template::Toolkit XML::RSS
 
       - name: Build the site
         run: ./build _site
