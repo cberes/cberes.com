@@ -155,7 +155,7 @@ sub page_metadata {
 
     # this one's even worse
     if ($contents =~ m|<\s*(\w+)[^>]*id\s*=\s*"time"[^>]*>\s*(\d+)[-/](\d+)[-/](\d+)\s*<\s*/\s*\1\s*>|s) {
-        $metadata{date_str} = sprintf "%04d/%02d%02d", $2, $3, $4;
+        $metadata{date_str} = sprintf "%04d/%02d/%02d", $2, $3, $4;
         $metadata{date} = timelocal(0, 0, 0, $4, $3 - 1, $2);
     }
 
