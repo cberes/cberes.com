@@ -14,106 +14,41 @@ chomp(my $project_root = $ENV{GITHUB_WORKSPACE} || `git rev-parse --show-topleve
 
 my $output_dir = $ARGV[0] || '_site';
 
-my $config = {
-    INCLUDE_PATH => catdir($project_root, 'templates'), # or list ref
-    OUTPUT_PATH  => catdir($project_root, $output_dir),
-    INTERPOLATE  => 1,               # expand "$var" in plain text
-    POST_CHOMP   => 1,               # cleanup whitespace
-    PRE_PROCESS  => 'header',        # prefix each template
-    POST_PROCESS => 'footer',        # append after each template
-    EVAL_PERL    => 1,               # evaluate Perl code blocks
-};
-
-# create Template object
-my $template = Template->new($config);
-
-# find articles
-my $max_articles = 5;
-my $article_dir_name = 'articles';
-my @article_dirs = &directories_in($article_dir_name);
-my @articles = &find_pages(\@article_dirs);
-my @first_articles = @articles[0..min($max_articles - 1, $#articles)];
-
-# define template variables for replacement
 my $root_url = 'https://cberes.com';
 my $root_title = 'cberes';
-my $vars = {
-    title => $root_title,
-    pages => \@first_articles,
-    more_articles => (scalar @articles) > $max_articles,
-};
 
-# root index.html
-my $input = 'index.html';
-my $output = $input;
+my $article_dir_name = 'articles';
+my @articles = &find_pages($article_dir_name);
+my $template = &make_primary_template;
 
-open my $input_file, '<', $input;
-$template->process($input_file, $vars, $output)
-    or die $template->error();
-close $input_file;
-
-# articles index.html
-$$vars{pages} = \@articles; # include all articles
-
-$input = catfile($article_dir_name, 'index.html');
-$output = $input;
-
-open my $article_input_file, '<', $input;
-$template->process($article_input_file, $vars, $output)
-    or die $template->error();
-close $article_input_file;
-
-# process article templates
-for my $article (@articles) {
-    my $article_path = %$article{url};
-    my $index = %$article{index};
-    my $title = %$article{title};
-
-    open my $article_file, '<', $index
-        or die "can't open $index: $!";
-
-    my $vars = {
-        title => "$root_title . $title",
-    };
-
-    $template->process($article_file, $vars, $index)
-        or die $template->error();
-
-    close $article_file;
-}
-
+&build_root_index($template, \@articles);
+&build_article_index($template, \@articles, $article_dir_name);
+&build_articles($template, \@articles);
 &build_redirects;
 &build_rss(\@articles, 10);
+&copy_assets;
 
-# copy article assets
-system './copy-page-assets', $output_dir;
+sub make_primary_template {
+    my $config = {
+        INCLUDE_PATH => catdir($project_root, 'templates'), # or list ref
+        OUTPUT_PATH  => catdir($project_root, $output_dir),
+        INTERPOLATE  => 1,               # expand "$var" in plain text
+        POST_CHOMP   => 1,               # cleanup whitespace
+        PRE_PROCESS  => 'header',        # prefix each template
+        POST_PROCESS => 'footer',        # append after each template
+        EVAL_PERL    => 1,               # evaluate Perl code blocks
+    };
 
-sub directories_in {
-    my ($dir_name) = @_;
-    my @dirs;
-
-    opendir my $dir, $dir_name
-        or die "can't open $dir_name: $!";
-
-    foreach my $dir (readdir $dir) {
-        next if $dir eq '.' || $dir eq '..';
-
-        my $this_dir = catdir($dir_name, $dir);
-
-        push @dirs, $this_dir if -d $this_dir;
-    }
-
-    closedir $dir;
-
-    @dirs
+    Template->new($config)
 }
 
 sub find_pages {
-    my ($dirs_to_check) = @_;
+    my ($pages_dir) = @_;
+    my @dirs_to_check = &directories_in($pages_dir);
 
     my @articles;
 
-    foreach my $article_path (@$dirs_to_check) {
+    foreach my $article_path (@dirs_to_check) {
         opendir my $article_dir, $article_path
             or die "can't open $article_path: $!";
 
@@ -139,6 +74,26 @@ sub find_pages {
     }
 
     reverse sort { $$a{date} <=> $$b{date} } @articles
+}
+
+sub directories_in {
+    my ($dir_name) = @_;
+    my @dirs;
+
+    opendir my $dir, $dir_name
+        or die "can't open $dir_name: $!";
+
+    foreach my $dir (readdir $dir) {
+        next if $dir eq '.' || $dir eq '..';
+
+        my $this_dir = catdir($dir_name, $dir);
+
+        push @dirs, $this_dir if -d $this_dir;
+    }
+
+    closedir $dir;
+
+    @dirs
 }
 
 sub page_metadata {
@@ -173,6 +128,70 @@ sub page_metadata {
     }
 
     %metadata
+}
+
+sub build_root_index {
+    my ($template, $articles) = @_;
+
+    my $max_articles = 5;
+    my @first_articles = @$articles[0..min($max_articles - 1, $#$articles)];
+
+    my $vars = {
+        title => $root_title,
+        pages => \@first_articles,
+        more_articles => (scalar @articles) > $max_articles,
+    };
+
+    my $input = 'index.html';
+    my $output = $input;
+
+    open my $input_file, '<', $input;
+
+    $template->process($input_file, $vars, $output)
+        or die $template->error();
+
+    close $input_file;
+}
+
+sub build_article_index {
+    my ($template, $articles, $article_dir_name) = @_;
+
+    my $vars = {
+        title => "$root_title . Articles",
+        pages => $articles,
+    };
+
+    my $input = catfile($article_dir_name, 'index.html');
+    my $output = $input;
+
+    open my $article_input_file, '<', $input;
+
+    $template->process($article_input_file, $vars, $output)
+        or die $template->error();
+
+    close $article_input_file;
+}
+
+sub build_articles {
+    my ($template, $articles) = @_;
+
+    for my $article (@$articles) {
+        my $article_path = %$article{url};
+        my $index = %$article{index};
+        my $title = %$article{title};
+
+        open my $article_file, '<', $index
+            or die "can't open $index: $!";
+
+        my $vars = {
+            title => "$root_title . $title",
+        };
+
+        $template->process($article_file, $vars, $index)
+            or die $template->error();
+
+        close $article_file;
+    }
 }
 
 sub build_redirects {
@@ -239,4 +258,8 @@ sub build_rss {
 sub format_rfc_822 {
     my ($dt) = @_;
     DateTime::Format::Mail->format_datetime($dt)
+}
+
+sub copy_assets {
+    system './copy-page-assets', $output_dir;
 }
