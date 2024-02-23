@@ -4,7 +4,7 @@ use 5.034;
 use if !$ENV{GITHUB_WORKSPACE}, "local::lib";
 use DateTime ();
 use DateTime::Format::Mail;
-use File::Spec::Functions ();
+use File::Spec::Functions qw( catdir catfile );
 use List::Util qw( min );
 use Template;
 use Time::Local qw( timelocal );
@@ -15,8 +15,8 @@ chomp(my $project_root = $ENV{GITHUB_WORKSPACE} || `git rev-parse --show-topleve
 my $output_dir = $ARGV[0] || '_site';
 
 my $config = {
-    INCLUDE_PATH => "$project_root/templates",  # or list ref
-    OUTPUT_PATH  => "$project_root/$output_dir",
+    INCLUDE_PATH => catdir($project_root, 'templates'), # or list ref
+    OUTPUT_PATH  => catdir($project_root, $output_dir),
     INTERPOLATE  => 1,               # expand "$var" in plain text
     POST_CHOMP   => 1,               # cleanup whitespace
     PRE_PROCESS  => 'header',        # prefix each template
@@ -55,7 +55,7 @@ close $input_file;
 # articles index.html
 $$vars{pages} = \@articles; # include all articles
 
-$input = File::Spec::Functions::catfile($article_dir_name, 'index.html');
+$input = catfile($article_dir_name, 'index.html');
 $output = $input;
 
 open my $article_input_file, '<', $input;
@@ -98,7 +98,7 @@ sub directories_in {
     foreach my $dir (readdir $dir) {
         next if $dir eq '.' || $dir eq '..';
 
-        my $this_dir = File::Spec::Functions::catdir($dir_name, $dir);
+        my $this_dir = catdir($dir_name, $dir);
 
         push @dirs, $this_dir if -d $this_dir;
     }
@@ -120,7 +120,7 @@ sub find_pages {
         foreach my $file (readdir $article_dir) {
             next unless $file eq 'index.html';
 
-            my $article_index = File::Spec::Functions::catfile($article_path, $file);
+            my $article_index = catfile($article_path, $file);
 
             my %metadata = &page_metadata($article_index, 'h2');
 
@@ -177,14 +177,14 @@ sub page_metadata {
 
 sub build_redirects {
     my $config = {
-        INCLUDE_PATH => "$project_root/templates",
-        OUTPUT_PATH  => "$project_root/$output_dir",
+        INCLUDE_PATH => catdir($project_root, 'templates'),
+        OUTPUT_PATH  => catdir($project_root, $output_dir),
         POST_CHOMP   => 1,
     };
 
     my $template = Template->new($config);
 
-    open my $redirect_file, '<', File::Spec::Functions::catfile($project_root, 'redirects.txt')
+    open my $redirect_file, '<', catfile($project_root, 'redirects.txt')
         or die "can't open redirects.txt: $!";
 
     while (<$redirect_file>) {
@@ -196,7 +196,7 @@ sub build_redirects {
             redirect_to => $redirect_to,
         };
 
-        $template->process('redirect', $vars, File::Spec::Functions::catfile($redirect_from, 'index.html'))
+        $template->process('redirect', $vars, catfile($redirect_from, 'index.html'))
             or die $template->error();
     }
 
@@ -233,7 +233,7 @@ sub build_rss {
         );
     }
 
-    $rss->save("$project_root/$output_dir/rss.xml");
+    $rss->save(catfile($project_root, $output_dir, 'rss.xml'));
 }
 
 sub format_rfc_822 {
