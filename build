@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 
 use 5.034;
+use warnings;
 use if !$ENV{GITHUB_WORKSPACE}, "local::lib";
 use DateTime ();
 use DateTime::Format::Mail;
@@ -10,28 +11,41 @@ use Template;
 use Time::Local qw( timelocal );
 use XML::RSS;
 
-chomp(my $project_root = $ENV{GITHUB_WORKSPACE} || `git rev-parse --show-toplevel`);
+&do_build;
 
-my $output_dir = $ARGV[0] || '_site';
+sub do_build {
+    chomp(my $project_root = $ENV{GITHUB_WORKSPACE} || `git rev-parse --show-toplevel`);
+    my $output_dir = $ARGV[0] || '_site';
 
-my $root_url = 'https://cberes.com';
-my $root_title = 'cberes';
+    my %site_config = (
+        project_root => $project_root,
+        output_dir => $output_dir,
+        title => 'cberes',
+        url => 'https://cberes.com',
+        pages_dir => 'articles',
+        max_articles_home => 5,
+        max_articles_rss => 10,
+    );
 
-my $article_dir_name = 'articles';
-my @articles = &find_pages($article_dir_name);
-my $template = &make_primary_template;
 
-&build_root_index($template, \@articles);
-&build_article_index($template, \@articles, $article_dir_name);
-&build_articles($template, \@articles);
-&build_redirects;
-&build_rss(\@articles, 10);
-&copy_assets;
+    my @article_dirs = &directories_in($site_config{pages_dir});
+    my @articles = &find_pages(\@article_dirs);
+    my $template = &make_primary_template(\%site_config);
+
+    &build_root_index(\%site_config, $template, \@articles);
+    &build_article_index(\%site_config, $template, \@articles);
+    &build_articles(\%site_config, $template, \@articles);
+    &build_redirects(\%site_config);
+    &build_rss(\%site_config, \@articles);
+    &copy_assets($site_config{output_dir});
+}
 
 sub make_primary_template {
+    my ($site_config) = @_;
+
     my $config = {
-        INCLUDE_PATH => catdir($project_root, 'templates'), # or list ref
-        OUTPUT_PATH  => catdir($project_root, $output_dir),
+        INCLUDE_PATH => catdir($$site_config{project_root}, 'templates'), # or list ref
+        OUTPUT_PATH  => catdir($$site_config{project_root}, $$site_config{output_dir}),
         INTERPOLATE  => 1,               # expand "$var" in plain text
         POST_CHOMP   => 1,               # cleanup whitespace
         PRE_PROCESS  => 'header',        # prefix each template
@@ -43,12 +57,11 @@ sub make_primary_template {
 }
 
 sub find_pages {
-    my ($pages_dir) = @_;
-    my @dirs_to_check = &directories_in($pages_dir);
+    my ($dirs_to_check) = @_;
 
     my @articles;
 
-    foreach my $article_path (@dirs_to_check) {
+    foreach my $article_path (@$dirs_to_check) {
         opendir my $article_dir, $article_path
             or die "can't open $article_path: $!";
 
@@ -131,15 +144,15 @@ sub page_metadata {
 }
 
 sub build_root_index {
-    my ($template, $articles) = @_;
+    my ($site_config, $template, $articles) = @_;
+    my $max_articles = $$site_config{max_articles_home};
 
-    my $max_articles = 5;
     my @first_articles = @$articles[0..min($max_articles - 1, $#$articles)];
 
     my $vars = {
-        title => $root_title,
+        title => $$site_config{title},
         pages => \@first_articles,
-        more_articles => (scalar @articles) > $max_articles,
+        more_articles => (scalar @$articles) > $max_articles,
     };
 
     my $input = 'index.html';
@@ -154,38 +167,38 @@ sub build_root_index {
 }
 
 sub build_article_index {
-    my ($template, $articles, $article_dir_name) = @_;
+    my ($site_config, $template, $articles) = @_;
 
     my $vars = {
-        title => "$root_title . Articles",
+        title => "$$site_config{title} . Articles",
         pages => $articles,
     };
 
-    my $input = catfile($article_dir_name, 'index.html');
+    my $input = catfile($$site_config{pages_dir}, 'index.html');
     my $output = $input;
 
-    open my $article_input_file, '<', $input;
+    open my $input_file, '<', $input;
 
-    $template->process($article_input_file, $vars, $output)
+    $template->process($input_file, $vars, $output)
         or die $template->error();
 
-    close $article_input_file;
+    close $input_file;
 }
 
 sub build_articles {
-    my ($template, $articles) = @_;
+    my ($site_config, $template, $articles) = @_;
 
     for my $article (@$articles) {
         my $article_path = %$article{url};
         my $index = %$article{index};
         my $title = %$article{title};
 
+        my $vars = {
+            title => "$$site_config{title} . $title",
+        };
+
         open my $article_file, '<', $index
             or die "can't open $index: $!";
-
-        my $vars = {
-            title => "$root_title . $title",
-        };
 
         $template->process($article_file, $vars, $index)
             or die $template->error();
@@ -195,35 +208,58 @@ sub build_articles {
 }
 
 sub build_redirects {
+    my ($site_config) = @_;
+
     my $config = {
-        INCLUDE_PATH => catdir($project_root, 'templates'),
-        OUTPUT_PATH  => catdir($project_root, $output_dir),
+        INCLUDE_PATH => catdir($$site_config{project_root}, 'templates'),
+        OUTPUT_PATH  => catdir($$site_config{project_root}, $$site_config{output_dir}),
         POST_CHOMP   => 1,
     };
 
     my $template = Template->new($config);
 
-    open my $redirect_file, '<', catfile($project_root, 'redirects.txt')
-        or die "can't open redirects.txt: $!";
+    my @redirects = &find_redirects($site_config);
 
-    while (<$redirect_file>) {
-        next unless $_ =~ /^\s*"([^"]+)"\s+"([^"]+)"\s*$/;
-        my ($redirect_from, $redirect_to) = ($1, $2);
+    for my $redirect (@redirects) {
+        my ($redirect_from, $redirect_to) = @$redirect;
 
         my $vars = {
-            title => $root_title,
+            title => $$site_config{title},
             redirect_to => $redirect_to,
         };
 
         $template->process('redirect', $vars, catfile($redirect_from, 'index.html'))
             or die $template->error();
     }
+}
+
+sub find_redirects {
+    my ($site_config) = @_;
+
+    my @redirects;
+
+    open my $redirect_file, '<', catfile($$site_config{project_root}, 'redirects.txt')
+        or die "can't open redirects.txt: $!";
+
+    while (<$redirect_file>) {
+        if (/^\s*"([^"]+)"\s+"([^"]+)"\s*$/ ) {
+            my @redirect = ($1, $2);
+            push @redirects, \@redirect;
+        }
+    }
 
     close $redirect_file;
+
+    @redirects
 }
 
 sub build_rss {
-    my ($articles, $max_articles) = @_;
+    my ($site_config, $articles) = @_;
+    my $project_root = $$site_config{project_root};
+    my $output_dir = $$site_config{output_dir};
+    my $max_articles = $$site_config{max_articles_rss};
+    my $root_title = $$site_config{title};
+    my $root_url = $$site_config{url};
 
     my $rss = XML::RSS->new(version => '2.0');
     $rss->channel(title         => $root_title,
@@ -261,5 +297,6 @@ sub format_rfc_822 {
 }
 
 sub copy_assets {
+    my ($output_dir) = @_;
     system './copy-page-assets', $output_dir;
 }
