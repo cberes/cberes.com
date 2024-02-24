@@ -27,7 +27,6 @@ sub do_build {
         max_articles_rss => 10,
     );
 
-
     my @article_dirs = &directories_in($site_config{pages_dir});
     my @articles = &find_pages(\@article_dirs);
     my $template = &make_primary_template(\%site_config);
@@ -242,7 +241,7 @@ sub find_redirects {
         or die "can't open redirects.txt: $!";
 
     while (<$redirect_file>) {
-        if (/^\s*"([^"]+)"\s+"([^"]+)"\s*$/ ) {
+        if (/^\s*"([^"]+)"\s+"([^"]+)"\s*$/) {
             my @redirect = ($1, $2);
             push @redirects, \@redirect;
         }
