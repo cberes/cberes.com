@@ -1,0 +1,25 @@
+{
+  "name": "cberes",
+  "version": "1.0.0",
+  "description": "My (Corey Beres) personal homepage at https://cberes.com.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cberes/cberes.com.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cberes/cberes.com/issues"
+  },
+  "homepage": "https://github.com/cberes/cberes.com#readme",
+  "type": "module",
+  "dependencies": {
+    "@11ty/eleventy": "^3.1.2",
+    "@11ty/eleventy-plugin-rss": "^2.0.4"
+  }
+}

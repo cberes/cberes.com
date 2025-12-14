@@ -1,0 +1,35 @@
+---
+title: My Rad Blog
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>{{ windowTitle }} - {{ title }}</title>
+  <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+  <link rel="icon" href="/favicon.png" type="image/png" sizes="72x72">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="alternate" href="/rss.xml" type="application/rss+xml" title="RSS">
+  <meta name="author" content="Corey Beres"/>
+  <meta name="description"
+    content="Personal homepage for Corey Beres. Mostly thoughts about software and skateboards."/>
+</head>
+
+<body>
+  <main>
+    <section id="intro">
+      <h1>{{ siteTitle }}</h1>
+      <p class="back"><a href="/">Back to home</a></p>
+    </section>
+    <section id="article">
+      <h2>{{ title }}</h2>
+      <p id="time">{{ date.toUTCString() }}</p>
+      {{ content | safe }}
+    </section>
+  </main>
+  <footer>
+    <p>&copy; 2024-2025 Corey Beres. Built with {{ eleventy.generator }}. Source available on <a href="https://github.com/cberes/cberes.com">GitHub</a>.</p>
+  </footer>
+</body>
+
+</html>
