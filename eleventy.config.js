@@ -1,4 +1,5 @@
 import { feedPlugin } from '@11ty/eleventy-plugin-rss';
+import { JSDOM } from 'jsdom';
 
 export default function (eleventyConfig) {
   eleventyConfig.addGlobalData('windowTitle', 'cberes');
@@ -21,6 +22,12 @@ export default function (eleventyConfig) {
 				email: "", // Optional
 			}
 		}
+	});
+
+  eleventyConfig.addShortcode("summarize", function (item) {
+		const dom = new JSDOM(item.content);
+    const summary = dom.window.document.getElementById('summary'); 
+    return (summary || dom.window.document.querySelector('p')).textContent;
 	});
 
   eleventyConfig.addNunjucksFilter("firstItems", function(array, count) {
