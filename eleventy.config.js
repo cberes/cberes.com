@@ -6,30 +6,30 @@ export default function (eleventyConfig) {
   eleventyConfig.addGlobalData('siteTitle', 'Corey Beres');
   eleventyConfig.addPassthroughCopy({assets: '/'});
   eleventyConfig.addPassthroughCopy('articles/**/*.png');
-	eleventyConfig.addPlugin(feedPlugin, {
-		type: "atom", // or "rss", "json"
-		outputPath: "/rss.xml",
-		collection: {
-			name: "articles", // iterate over `collections.posts`
-			limit: 0,     // 0 means no limit
-		},
-		metadata: {
-			language: "en",
-			title: "cberes",
-			subtitle: "Personal homepage for Corey Beres. Mostly thoughts about software and skateboards.",
-			base: "https://cberes.com/",
-			author: {
-				name: "Corey Beres",
-				email: "", // Optional
-			}
-		}
-	});
+  eleventyConfig.addPlugin(feedPlugin, {
+    type: "atom",       // or "rss", "json"
+    outputPath: "/rss.xml",
+    collection: {
+      name: "articles", // iterate over `collections.posts`
+      limit: 0,         // 0 means no limit
+    },
+    metadata: {
+      language: "en",
+      title: "cberes",
+      subtitle: "Personal homepage for Corey Beres. Mostly thoughts about software and skateboards.",
+      base: "https://cberes.com/",
+      author: {
+        name: "Corey Beres",
+        email: "",      // Optional
+      }
+    }
+  });
 
   eleventyConfig.addShortcode("summarize", function (item) {
-		const dom = new JSDOM(item.content);
+    const dom = new JSDOM(item.content);
     const summary = dom.window.document.getElementById('summary'); 
     return (summary || dom.window.document.querySelector('p')).textContent;
-	});
+  });
 
   eleventyConfig.addNunjucksFilter("firstItems", function(array, count) {
     return array.slice(0, count);
