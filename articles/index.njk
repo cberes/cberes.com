@@ -6,26 +6,29 @@ pagination:
   data: collections.articles
   size: 10
 ---
+<header id="intro">
+  <h1>{{ siteTitle }}</h1>
+  <p class="back"><a href="/">Back to home</a></p>
+</header>
 <main>
-  <section id="intro">
-    <h1>{{ siteTitle }}</h1>
-    <p class="back"><a href="/">Back to home</a></p>
-  </section>
   <section id="articles">
     <h2>{{ title }}</h2>
 
   {# Pagination: see https://www.11ty.dev/docs/pagination/ #}
   {%- for a in pagination.items %}
-    <h3>{{ a.data.title }}</h3>
-    <p class="time">{{ a.data.date.toUTCString() }}</p>
-    <p class="summary">{% summarize a %}</p>
-    <p><a href="{{ a.url }}">Read more</a></p>
+    <article>
+      <h3>{{ a.data.title }}</h3>
+      <p class="time">{{ a.data.date.toUTCString() }}</p>
+      <p class="summary">{% summarize a %}</p>
+      <p><a href="{{ a.url }}">Read more</a></p>
+    </article>
   {%- endfor %}
 
   {# Pagination nav: see https://www.11ty.dev/docs/pagination/nav/ #}
   {# TODO the first/previous and next/last links are inactive for the current page, but not the numbered links #}
   {# TODO this is fine until I have many pages #}
-    <nav>
+  {% if pagination.pages.length > 1 %}
+    <nav id="pages">
       <ol>
         <li>{% if page.url != pagination.href.first %}<a href="{{ pagination.href.first }}">First</a>{% else %}First{% endif %}</li>
         <li>{% if pagination.href.previous %}<a href="{{ pagination.href.previous }}">Previous</a>{% else %}Previous{% endif %}</li>
@@ -36,7 +39,6 @@ pagination:
         <li>{% if page.url != pagination.href.last %}<a href="{{ pagination.href.last }}">Last</a>{% else %}Last{% endif %}</li>
       </ol>
     </nav>
-  </section>
-  <section>
+  {% endif %}
   </section>
 </main>

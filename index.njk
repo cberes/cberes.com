@@ -2,40 +2,34 @@
 layout: mylayout.njk
 title: Corey Beres
 ---
+<header id="intro">
+  <h1>Corey Beres</h1>
+  <h2>Senior Software Engineer</h2>
+  <h3>Full-time since 2011&mdash;Based in the USA</h3>
+</header>
 <main>
-  <section id="intro">
-    <h1>Corey Beres</h1>
-    <h2>Senior Software Engineer</h2>
-    <h3>Full-time since 2011&mdash;Based in the USA</h3>
-  </section>
-  <section id="articles">
-    <h2>Articles</h2>
-    <ul>
+  <h2 id="articles">Articles</h2>
+  <ul>
 {%- for a in collections.articles | reverse | firstItems(5) %}
-      <li><a href="{{ a.url }}">{{ a.data.title }}</a></li>
+    <li><a href="{{ a.url }}">{{ a.data.title }}</a></li>
 {%- endfor %}
-    </ul>
+  </ul>
 {% if collections.articles.length > 5 %}
-    <p><a href="articles/">All articles</a></p>
+  <p><a href="articles/">All articles</a></p>
 {% endif %}
-  </section>
-  <section id="links">
-    <h2>Links</h2>
-    <ul>
-      <li><a href="https://github.com/cberes">GitHub</a>: my software projects</li>
-      <li><a href="https://flowercompanion.com/">Flower Companion</a>: a project from 2020 that I'm particularly proud of</li>
-      <li><a href="https://twentyfifteen.cberes.com">twentyfifteen.cberes.com</a>: the previous iteration of this website</li>
-    </ul>
-  </section>
-  <section id="contact">
-    <h2>Contact</h2>
-    <p>
-      You can find me on <a href="https://www.linkedin.com/in/coreyberes/">LinkedIn</a>.
-      If I don't respond to you, don't take it personally; I don't login to LinkedIn often.
-    </p>
-    <p>
-      If you have questions about this website or my other software projects,
-      you can create an issue on <a href="https://github.com/cberes">GitHub</a>.
-    </p>
-  </section>
+  <h2 id="links">Links</h2>
+  <ul>
+    <li><a href="https://github.com/cberes">GitHub</a>: my software projects</li>
+    <li><a href="https://flowercompanion.com/">Flower Companion</a>: a project from 2020 that I'm particularly proud of</li>
+    <li><a href="https://twentyfifteen.cberes.com">twentyfifteen.cberes.com</a>: the previous iteration of this website</li>
+  </ul>
+  <h2 id="contact">Contact</h2>
+  <p>
+    You can find me on <a href="https://www.linkedin.com/in/coreyberes/">LinkedIn</a>.
+    If I don't respond to you, don't take it personally; I don't login to LinkedIn often.
+  </p>
+  <p>
+    If you have questions about this website or my other software projects,
+    you can create an issue on <a href="https://github.com/cberes">GitHub</a>.
+  </p>
 </main>
