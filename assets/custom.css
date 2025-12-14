@@ -1,3 +1,11 @@
 :root {
-  --accent: violet;
+  --accent: purple;
+  --accent-hover: mediumpurple;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --accent: violet;
+    --accent-hover: plum;
+  }
 }
