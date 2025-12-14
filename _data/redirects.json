@@ -1,0 +1,38 @@
+[
+  {
+    "from": "portfolio",
+    "to": "https://twentyfifteen.cberes.com/portfolio/"
+  },
+  {
+    "from": "contact",
+    "to": "https://twentyfifteen.cberes.com/contact/"
+  },
+  {
+    "from": "blog",
+    "to": "https://twentyfifteen.cberes.com/blog/"
+  },
+  {
+    "from": "blog/2015-08-31_counting_counties",
+    "to": "https://twentyfifteen.cberes.com/blog/2015-08-31_counting_counties"
+  },
+  {
+    "from": "blog/2015-10-10_bar_chart_with_incanter",
+    "to": "https://twentyfifteen.cberes.com/blog/2015-10-10_bar_chart_with_incanter"
+  },
+  {
+    "from": "blog/2015-10-20_how_to_use_streams_in_java_8",
+    "to": "https://twentyfifteen.cberes.com/blog/2015-10-20_how_to_use_streams_in_java_8"
+  },
+  {
+    "from": "blog/2015-11-30_junit_tips",
+    "to": "https://twentyfifteen.cberes.com/blog/2015-11-30_junit_tips"
+  },
+  {
+    "from": "blog/2017-02-14_static_website_conversion",
+    "to": "https://twentyfifteen.cberes.com/blog/2017-02-14_static_website_conversion"
+  },
+  {
+    "from": "blog/2017-02-15_common_clojure_idioms",
+    "to": "https://twentyfifteen.cberes.com/blog/2017-02-15_common_clojure_idioms"
+  }
+]
