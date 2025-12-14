@@ -1,0 +1,42 @@
+---
+layout: mylayout.njk
+windowTitle: cberes - Articles
+title: Articles
+pagination:
+  data: collections.articles
+  size: 10
+---
+<main>
+  <section id="intro">
+    <h1>{{ siteTitle }}</h1>
+    <p class="back"><a href="/">Back to home</a></p>
+  </section>
+  <section id="articles">
+    <h2>{{ title }}</h2>
+
+  {# Pagination: see https://www.11ty.dev/docs/pagination/ #}
+  {%- for a in pagination.items %}
+    <h3>{{ a.data.title }}</h3>
+    <p class="time">{{ a.data.date.toUTCString() }}</p>
+    <p class="summary">SUMMARY GOES HERE</p>
+    <p><a href="{{ a.url }}">Read more</a></p>
+  {%- endfor %}
+
+  {# Pagination nav: see https://www.11ty.dev/docs/pagination/nav/ #}
+  {# TODO the first/previous and next/last links are inactive for the current page, but not the numbered links #}
+  {# TODO this is fine until I have many pages #}
+    <nav>
+      <ol>
+        <li>{% if page.url != pagination.href.first %}<a href="{{ pagination.href.first }}">First</a>{% else %}First{% endif %}</li>
+        <li>{% if pagination.href.previous %}<a href="{{ pagination.href.previous }}">Previous</a>{% else %}Previous{% endif %}</li>
+    {%- for pageEntry in pagination.pages %}
+        <li><a href="{{ pagination.hrefs[ loop.index0 ] }}"{% if page.url == pagination.hrefs[ loop.index0 ] %} aria-current="page"{% endif %}>Page {{ loop.index }}</a></li>
+    {%- endfor %}
+        <li>{% if pagination.href.next %}<a href="{{ pagination.href.next }}">Next</a>{% else %}Next{% endif %}</li>
+        <li>{% if page.url != pagination.href.last %}<a href="{{ pagination.href.last }}">Last</a>{% else %}Last{% endif %}</li>
+      </ol>
+    </nav>
+  </section>
+  <section>
+  </section>
+</main>

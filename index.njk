@@ -1,3 +1,7 @@
+---
+layout: mylayout.njk
+title: Corey Beres
+---
 <main>
   <section id="intro">
     <h1>Corey Beres</h1>
@@ -7,13 +11,13 @@
   <section id="articles">
     <h2>Articles</h2>
     <ul>
-[%  FOREACH page IN pages %]
-      <li><a href="[% page.url %]">[% page.title %]</a>
-[%  END %]
+{%- for a in collections.articles | reverse | firstItems(5) %}
+      <li><a href="{{ a.url }}">{{ a.data.title }}</a></li>
+{%- endfor %}
     </ul>
-[%  IF more_articles %]
+{% if collections.articles.length > 5 %}
     <p><a href="articles/">All articles</a></p>
-[%  END %]
+{% endif %}
   </section>
   <section id="links">
     <h2>Links</h2>
