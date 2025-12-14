@@ -4,6 +4,7 @@ windowTitle: cberes - Articles
 title: Articles
 pagination:
   data: collections.articles
+  reverse: true
   size: 10
 ---
 <header id="intro">
@@ -18,9 +19,9 @@ pagination:
   {%- for a in pagination.items %}
     <article>
       <h3>{{ a.data.title }}</h3>
-      <p class="time">{{ a.data.date.toUTCString() }}</p>
+      <p class="time">{{ a.data.dateString }}</p>
       <p class="summary">{% summarize a %}</p>
-      <p><a href="{{ a.url }}">Read more</a></p>
+      <p><a class="button" href="{{ a.url }}">Read more</a></p>
     </article>
   {%- endfor %}
 
