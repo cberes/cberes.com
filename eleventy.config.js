@@ -5,6 +5,7 @@ export default function (eleventyConfig) {
   eleventyConfig.addGlobalData('windowTitle', 'cberes');
   eleventyConfig.addGlobalData('siteTitle', 'Corey Beres');
   eleventyConfig.addPassthroughCopy({assets: '/'});
+  eleventyConfig.addPassthroughCopy('articles/**/*.png');
 	eleventyConfig.addPlugin(feedPlugin, {
 		type: "atom", // or "rss", "json"
 		outputPath: "/rss.xml",
