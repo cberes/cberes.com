@@ -7,7 +7,7 @@ export default function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy({assets: '/'});
   eleventyConfig.addPassthroughCopy('articles/**/*.png');
   eleventyConfig.addPlugin(feedPlugin, {
-    type: 'atom',       // or "rss", "json"
+    type: 'atom',       // or 'rss', 'json'
     outputPath: '/rss.xml',
     collection: {
       name: 'articles', // iterate over `collections.articles`
