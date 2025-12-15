@@ -7,31 +7,31 @@ export default function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy({assets: '/'});
   eleventyConfig.addPassthroughCopy('articles/**/*.png');
   eleventyConfig.addPlugin(feedPlugin, {
-    type: "atom",       // or "rss", "json"
-    outputPath: "/rss.xml",
+    type: 'atom',       // or "rss", "json"
+    outputPath: '/rss.xml',
     collection: {
-      name: "articles", // iterate over `collections.posts`
+      name: 'articles', // iterate over `collections.articles`
       limit: 0,         // 0 means no limit
     },
     metadata: {
-      language: "en",
-      title: "cberes",
-      subtitle: "Personal homepage for Corey Beres. Mostly thoughts about software and skateboards.",
-      base: "https://cberes.com/",
+      language: 'en',
+      title: 'cberes',
+      subtitle: 'Personal homepage for Corey Beres. Mostly thoughts about software and skateboards.',
+      base: 'https://cberes.com/',
       author: {
-        name: "Corey Beres",
-        email: "",      // Optional
+        name: 'Corey Beres',
+        email: '',      // Optional
       }
     }
   });
 
-  eleventyConfig.addShortcode("summarize", function (item) {
+  eleventyConfig.addShortcode('summarize', function (item) {
     const dom = new JSDOM(item.content);
     const summary = dom.window.document.getElementById('summary'); 
     return (summary || dom.window.document.querySelector('p')).textContent;
   });
 
-  eleventyConfig.addNunjucksFilter("firstItems", function(array, count) {
+  eleventyConfig.addNunjucksFilter('firstItems', function(array, count) {
     return array.slice(0, count);
   });
 };
