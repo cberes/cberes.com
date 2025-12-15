@@ -1,0 +1,53 @@
+---
+tags:
+  - articles
+  - software
+title: >
+  New website: 2025 edition
+date: 2025-12-14
+---
+<p>
+  This website is now built using <a href="https://www.11ty.dev/">Eleventy</a> instead of the Perl script I wrote a couple years ago.
+  Everything should look the same as before, except for some minor visual tweaks.
+</p>
+<p>
+  Eleventy is a static site generator like <a href="https://gohugo.io/">Hugo</a>, which I've used before.
+  However Eleventy uses Javascript instead of Go.
+  While it uses Javascript, it outputs ordinary HTML files instead of single-page apps like Angular or Vue.
+</p>
+<p>
+  Last year I read <a href="https://www.learning-perl.com/"><em>Learning Perl</em></a>.
+  Then I <a href="../new-website-2024-edition/">made this website</a> to practice with Perl.
+  However, I've barely used Perl since then&mdash;lately I've been re-learning Python.
+  The thought of using Perl to implement something like pagination didn't interest me.
+  That's the biggest reason why I decided to use Eleventy, but it has other advantages:
+</p>
+<ul>
+  <li>I'm more familiar with Javascript than Go or Perl</li>
+  <li>The Github pipeline to build and deploy the website takes about 30 seconds, compared to around 5 minutes with Perl</li>
+  <li>I can run a live web server, which my Perl script couldn't do</li>
+</ul>
+<p>
+  Through the process of implementing my website with Eleventy, I've gotten to use a number of its features:
+</p>
+<ul>
+  <li>Collections (of course)</li>
+  <li>Pagination</li>
+  <li>Layouts</li>
+  <li>Building pages from data</li>
+  <li>Plugins (RSS)</li>
+  <li>Computed data</li>
+  <li>Nunjucks filters</li>
+  <li>Shortcodes</li>
+  <li>Passthrough file copy</li>
+  <li>Global data</li>
+</ul>
+<p>
+  I'm curious about other features that I haven't used yet.
+  However, I've entirely replaced my old build system, so I don't think I need any other features.
+</p>
+<p>
+  It was a short, fun project.
+  Was it necessary considering I hadn't updated my website in a year and a half?
+  Time will tell!
+</p>
