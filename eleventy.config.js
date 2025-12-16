@@ -10,6 +10,18 @@ export default function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy({assets: '/'});
   eleventyConfig.addPassthroughCopy('articles/**/*.png');
 
+  // Collections
+  eleventyConfig.addCollection('tagsList', collectionApi => {
+    const allTags = collectionApi.getAll()
+      .filter(item => !!item.data.tags)
+      .reduce((acc, item) => {
+        item.data.tags.forEach(tag => acc.add(tag));
+        return acc;
+      }, new Set());
+    allTags.delete('articles');
+    return [...allTags];
+  });
+
   // RSS
   eleventyConfig.addPlugin(feedPlugin, {
     type: 'atom',       // or 'rss', 'json'

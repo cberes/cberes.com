@@ -9,3 +9,19 @@
     --accent-hover: plum;
   }
 }
+
+/* TODO is this stupid? */
+section#tags ul {
+  display: inline;
+  padding-left: 0;
+}
+section#tags ul li {
+  display: inline;
+  list-style-type: none;
+}
+section#tags ul li::before {
+  content: ', ';
+}
+section#tags ul li:first-child::before {
+  content: none;
+}

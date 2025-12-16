@@ -24,6 +24,14 @@
       <p id="time">{{ dateString }}</p>
       {{ content | safe }}
     </section>
+    <section id="tags">
+      tags:
+      <ul>
+      {%- for tag in tags -%}
+        {% if tag != 'articles' %}<li><a href="/tags/{{ tag | slugify }}">{{ tag }}</a></li>{% endif -%}
+      {%- endfor -%}
+      </ul>
+    </section>
   </main>
   <footer>
     <p>
