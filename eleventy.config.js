@@ -2,10 +2,15 @@ import { feedPlugin } from '@11ty/eleventy-plugin-rss';
 import { JSDOM } from 'jsdom';
 
 export default function (eleventyConfig) {
+  // Global data
   eleventyConfig.addGlobalData('windowTitle', 'cberes');
   eleventyConfig.addGlobalData('siteTitle', 'Corey Beres');
+
+  // Copy files
   eleventyConfig.addPassthroughCopy({assets: '/'});
   eleventyConfig.addPassthroughCopy('articles/**/*.png');
+
+  // RSS
   eleventyConfig.addPlugin(feedPlugin, {
     type: 'atom',       // or 'rss', 'json'
     outputPath: '/rss.xml',
@@ -25,12 +30,14 @@ export default function (eleventyConfig) {
     }
   });
 
+  // Summary shortcode
   eleventyConfig.addShortcode('summarize', function (item) {
     const dom = new JSDOM(item.content);
     const summary = dom.window.document.getElementById('summary'); 
     return (summary || dom.window.document.querySelector('p')).textContent;
   });
 
+  // Nunjucks filters
   eleventyConfig.addNunjucksFilter('firstItems', function(array, count) {
     return array.slice(0, count);
   });
