@@ -1,45 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"/>
-  <title>{{ windowTitle }} - {{ title }}</title>
-  <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
-  <link rel="stylesheet" href="/custom.css">
-  <link rel="icon" href="/favicon.png" type="image/png" sizes="72x72">
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link rel="alternate" href="/rss.xml" type="application/rss+xml" title="RSS">
-  <meta name="author" content="Corey Beres"/>
-  <meta name="description"
-    content="Personal homepage for Corey Beres. Mostly thoughts about software and skateboards."/>
-</head>
-
-<body>
-  <header id="intro">
-    <h1>{{ siteTitle }}</h1>
-    <p class="back"><a href="/">&#8592; Back to home</a></p>
-  </header>
-  <main>
-    <section id="article">
-      <h2>{{ title }}</h2>
-      <p id="time">{{ dateString }}</p>
-      {{ content | safe }}
-    </section>
-    <section id="tags">
-      tags:
-      <ul>
-      {%- for tag in tags -%}
-        {% if tag != 'articles' %}<li><a href="/tags/{{ tag | slugify }}">{{ tag }}</a></li>{% endif -%}
-      {%- endfor -%}
-      </ul>
-    </section>
-  </main>
-  <footer>
-    <p>
-      &copy; 2024-2025 Corey Beres.
-      Built with <a href="https://www.11ty.dev">{{ eleventy.generator }}</a>.
-      Source available on <a href="https://github.com/cberes/cberes.com">GitHub</a>.
-    </p>
-  </footer>
-</body>
-
-</html>
+---
+layout: secondary.njk
+---
+<section id="article">
+  <h2>{{ title }}</h2>
+  <p id="time">{{ dateString }}</p>
+  {{ content | safe }}
+</section>
+<section id="tags">
+  tags:
+  <ul>
+  {%- for tag in tags -%}
+    {% if tag != 'articles' %}<li><a href="/tags/{{ tag | slugify }}">{{ tag }}</a></li>{% endif -%}
+  {%- endfor -%}
+  </ul>
+</section>

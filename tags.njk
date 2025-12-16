@@ -1,22 +1,16 @@
 ---
-layout: main.njk
+layout: secondary.njk
 pagination:
   data: collections.tagsList
   size: 1
   alias: title
 permalink: "/tags/{{ title | slugify }}/"
 ---
-<header id="intro">
-  <h1>{{ siteTitle }}</h1>
-  <p class="back"><a href="/">&#8592; Back to home</a></p>
-</header>
-<main>
-  <section id="items">
-    <h2>{{ title | title }}</h2>
-    <ol>
-    {%- for a in collections[title} | reverse %}
-      <li><a href="{{ a.url }}">{{ a.data.title }}</a></li>
-    {%- endfor %}
-    </ol>
-  </section>
-</main>
+<section id="items">
+  <h2>{{ title | title }}</h2>
+  <ol>
+  {%- for a in collections[title} | reverse %}
+    <li><a href="{{ a.url }}">{{ a.data.title }}</a></li>
+  {%- endfor %}
+  </ol>
+</section>
