@@ -8,9 +8,10 @@ permalink: "/tags/{{ title | slugify }}/"
 ---
 <section id="items">
   <h2>{{ title | title }}</h2>
+  <p>All articles with the tag <em>{{ title }}</em></p>
   <ol>
-  {%- for a in collections[title} | reverse %}
-    <li><a href="{{ a.url }}">{{ a.data.title }}</a></li>
+  {%- for a in collections[title] | reverse %}
+    <li><a href="{{ a.url }}">{{ a.data.title }}</a> {{ a.data.dateStringShort }}</li>
   {%- endfor %}
   </ol>
 </section>

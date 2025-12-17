@@ -12,14 +12,14 @@ export default function (eleventyConfig) {
 
   // Collections
   eleventyConfig.addCollection('tagsList', collectionApi => {
-    const allTags = collectionApi.getAll()
-      .filter(item => !!item.data.tags)
-      .reduce((acc, item) => {
-        item.data.tags.forEach(tag => acc.add(tag));
+    const tags = collectionApi.getAll()
+      .flatMap(item => item.data.tags || [])
+      .reduce((acc, tag) => {
+        acc.add(tag);
         return acc;
       }, new Set());
-    allTags.delete('articles');
-    return [...allTags];
+    tags.delete('articles');
+    return [...tags];
   });
 
   // RSS
