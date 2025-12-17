@@ -1,5 +1,10 @@
 import { feedPlugin } from '@11ty/eleventy-plugin-rss';
 import { JSDOM } from 'jsdom';
+import slugify from '@sindresorhus/slugify';
+
+function setEquals(a, b) {
+  return a === b || (a.size === b.size && [...a].every((it => b.has(it))));
+}
 
 export default function (eleventyConfig) {
   // Global data
@@ -10,6 +15,8 @@ export default function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy({assets: '/'});
   eleventyConfig.addPassthroughCopy('articles/**/*.png');
 
+  const knownTags = new Set(['skateboarding', 'software', 'attention']);
+
   // Collections
   eleventyConfig.addCollection('tagsList', collectionApi => {
     const tags = collectionApi.getAll()
@@ -19,7 +26,27 @@ export default function (eleventyConfig) {
         return acc;
       }, new Set());
     tags.delete('articles');
+
+    // check that we know all tags and all known tags are actually used
+    if (!setEquals(knownTags, tags)) {
+      const tagsToAdd = tags.difference(knownTags);
+      const tagsToRemove = knownTags.difference(tags);
+      throw new Error(`Update list of tags! Add: ${[...tagsToAdd]} Remove: ${[...tagsToRemove]}`);
+    }
     return [...tags];
+  });
+
+  // add templates for all tags
+  knownTags.forEach(tag => {
+    eleventyConfig.addTemplate(`tags/${slugify(tag)}.njk`, `<p>All articles with the tag <em>{{ title | lower }}</em></p>`, {
+      layout: 'pages.njk',
+      title: tag,
+      pagination: {
+        data: `collections.${tag}`,
+        reverse: true,
+        size: 6
+      }
+    });
   });
 
   // RSS

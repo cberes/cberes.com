@@ -1,0 +1,60 @@
+---
+layout: secondary.njk
+---
+<section id="{{ title | lower}}">
+  <h2>{{ title | title }}</h2>
+  {{ content | safe }}
+
+{# Pagination: see https://www.11ty.dev/docs/pagination/ #}
+{%- for a in pagination.items %}
+  <article>
+    <h3>{{ a.data.title }}</h3>
+    <p class="time">{{ a.data.dateString }}</p>
+    <p class="summary">{% summarize a %}</p>
+    <p><a class="button" href="{{ a.url }}">Read more</a></p>
+  </article>
+{%- endfor %}
+
+{# Pagination nav: see https://www.11ty.dev/docs/pagination/nav/ #}
+{# TODO the first/previous and next/last links are inactive for the current page, but not the numbered links #}
+{# TODO this is fine until I have many pages #}
+{% if pagination.pages.length > 1 %}
+  <nav id="pages" aria-label="pagination">
+    <ol class="pagination">
+  {% if pagination.pages.length < 6 %}
+    {%- for pageEntry in pagination.pages %}
+      <li><a href="{{ pagination.hrefs[ loop.index0 ] }}"{% if page.url == pagination.hrefs[ loop.index0 ] %} aria-current="page"{% endif %}><span class="visuallyhidden">Page </span>{{ loop.index }}</a></li>
+    {%- endfor %}
+  {% else %}
+      <li>
+        <a href="{{ pagination.href.first }}"{% if page.url == pagination.href.first %} aria-current="page"{% endif %}>
+          <span aria-hidden="true">&laquo;</span>
+          <span class="visuallyhidden">first page</span>
+        </a>
+      </li>
+      <li>
+        <a href="{{ pagination.href.previous }}"{% if not pagination.href.previous %} aria-current="page"{% endif %}>
+          <span aria-hidden="true">&lsaquo;</span>
+          <span class="visuallyhidden">previous page</span>
+        </a>
+      </li>
+  {%- for pageEntry in pagination.pages %}
+      <li><a href="{{ pagination.hrefs[ loop.index0 ] }}"{% if page.url == pagination.hrefs[ loop.index0 ] %} aria-current="page"{% endif %}><span class="visuallyhidden">Page </span>{{ loop.index }}</a></li>
+  {%- endfor %}
+      <li>
+        <a href="{{ pagination.href.next }}"{% if not pagination.href.next %} aria-current="page"{% endif %}>
+          <span class="visuallyhidden">next page</span
+          ><span aria-hidden="true">&rsaquo;</span>
+        </a>
+      </li>
+      <li>
+        <a href="{{ pagination.href.last }}"{% if page.url == pagination.href.last %} aria-current="page"{% endif %}>
+          <span class="visuallyhidden">last page</span
+          ><span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+  {% endif %}
+    </ol>
+  </nav>
+{% endif %}
+</section>

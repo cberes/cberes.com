@@ -1,17 +1,13 @@
 ---
 layout: secondary.njk
-pagination:
-  data: collections.tagsList
-  size: 1
-  alias: title
-permalink: "/tags/{{ title | slugify }}/"
+title: Tags
 ---
-<section id="items">
-  <h2>{{ title | title }}</h2>
-  <p>All articles with the tag <em>{{ title }}</em></p>
-  <ol>
-  {%- for a in collections[title] | reverse %}
-    <li><a href="{{ a.url }}">{{ a.data.title }}</a> {{ a.data.dateStringShort }}</li>
+<section id="all-tags">
+  <h2>{{ title }}</h2>
+  <p>All tags used in articles</p>
+  <ul>
+  {%- for tag in collections.tagsList %}
+    <li><a href="/tags/{{ tag | slugify }}">{{ tag }}</a></li>
   {%- endfor %}
-  </ol>
+  </ul>
 </section>
