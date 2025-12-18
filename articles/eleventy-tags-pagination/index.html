@@ -1,0 +1,129 @@
+---
+tags:
+  - articles
+  - software
+title: Paginated collections by tag in Eleventy
+date: 2025-12-17
+templateEngineOverride: false
+---
+<p>
+  I want to make <a href="https://www.11ty.dev/">Eleventy</a> generate paginated lists of posts for each tag I use.
+  However, I want Eleventy to find all tags and generate the pages dynamically.
+  I definitely don’t want to do my own pagination. But it seems this is impossible.
+</p>
+<p>
+  I came across some blog posts where others have thought about this:
+</p>
+<ul>
+  <li><a href="https://chriskirknielsen.com/blog/double-pagination-in-eleventy/">Double-Pagination in Elev­enty</a></li>
+  <li><a href="https://www.codeflood.net/blog/2024/04/17/11ty-nested-pagination/">Eleventy Nested Pagination</a></li>
+  <li><a href="https://www.11ty.dev/docs/quicktips/tag-pages/">Quick Tip: Zero Maintenance Tag Pages for your Blog</a></li>
+</ul>
+<p>
+  For context, I’m using the <code>tags</code> value only, instead of something else like <code>category</code>.
+  I give every post the articles tag, and I also include any other relevant keywords.
+  This is nice because Eleventy automatically makes a collection for each tag.
+</p>
+<p>
+  Some of the problems I encountered:
+</p>
+<ol>
+  <li>
+    You need pagination for the list of articles, but to dynamically make a list of pages you also need pagination, and double pagination isn't supported
+  </li>
+  <li>
+    You can dynamically add pages (“templates” in Eleventy speak), but you can’t add pages while using the collections API (it seems it’s too late)
+  </li>
+  <li>
+    You need to use the collections API to get all tags
+  </li>
+</ol>
+<p>
+  I like the "Double-Pagination in Elev­enty" option the most&mdash;in particular the first solution, which used a hard-coded list of tags.
+  I think it's not ideal, but I prefer it over implementing my own pagination.
+  And I know there was example code for it, but I have a moral objection here.
+</p>
+<p>
+  However, I've made this solution bearable.
+  You can check that your list of tags contains all the right tags without extras.
+  If you’re missing tags or have extras, throw an error and stop building the site.
+  In the error message you can even include the tags that should be added/removed.
+  You can be confident that the list of tags is always correct.
+</p>
+<p>
+  The relevant part of <a href="https://github.com/cberes/cberes.com/blob/b54adbe7744442db7acf0d7f8ce8dbc4bb34cfc0/eleventy.config.js">eleventy.config.js</a> is below.
+  I removed the "articles" tag because all posts have that tag.
+</p>
+<pre><code>function setEquals(a, b) {
+  return a === b || (a.size === b.size && [...a].every((it => b.has(it))));
+}
+
+const knownTags = new Set(['skateboarding', 'software', 'attention']);
+
+eleventyConfig.addCollection('tagsList', collectionApi => {
+  const tags = collectionApi.getAll()
+    .flatMap(item => item.data.tags || [])
+    .reduce((acc, tag) => {
+      acc.add(tag);
+      return acc;
+    }, new Set());
+  tags.delete('articles');
+
+  // check that we know all tags and all known tags are actually used
+  if (!setEquals(knownTags, tags)) {
+    const tagsToAdd = tags.difference(knownTags);
+    const tagsToRemove = knownTags.difference(tags);
+    throw new Error(`Update list of tags! Add: ${[...tagsToAdd]} Remove: ${[...tagsToRemove]}`);
+  }
+  return [...tags];
+});</code></pre>
+<p>
+  Use the list of tags to dynamically add your templates.
+</p>
+<pre><code>knownTags.forEach(tag => {
+  eleventyConfig.addTemplate(`tags/${slugify(tag)}.njk`, `&lt;p>All articles with the tag &lt;em>${tag}&lt;/em>&lt;/p>`, {
+    layout: 'paged.njk',
+    title: tag,
+    pagination: {
+      data: `collections.${tag}`,
+      reverse: true,
+      size: 6
+    }
+  });
+});</code></pre>
+<p>
+  You can see that I have pagination values in the front matter, but it's not used in the template.
+  Instead I used the pagination in the layout.
+</p>
+<pre><code>---
+layout: secondary.njk
+---
+&lt;section id="{{ title | lower}}">
+  &lt;h2>{{ title | title }}&lt;/h2>
+  {{ content | safe }}
+
+{%- for a in pagination.items %}
+  &lt;article>
+    &lt;h3>{{ a.data.title }}&lt;/h3>
+    &lt;p class="time">{{ a.data.dateString }}&lt;/p>
+    &lt;p class="summary">{% summarize a %}&lt;/p>
+    &lt;p>&lt;a class="button" href="{{ a.url }}">Read more&lt;/a>&lt;/p>
+  &lt;/article>
+{%- endfor %}</code></pre>
+<p>
+  <strong>Bonus</strong>: I used the list of tags to make a page that had&mdash;you'll never guess&mdash;a list of all tags!
+  Is it useful? I don’t know, but now I have it.
+</p>
+<pre><code>---
+layout: secondary.njk
+title: Tags
+---
+&lt;section id="all-tags">
+  &lt;h2>{{ title }}&lt;/h2>
+  &lt;p>All tags used in articles&lt;/p>
+  &lt;ul>
+  {%- for tag in collections.tagsList %}
+    &lt;li>&lt;a href="/tags/{{ tag | slugify }}">{{ tag }}&lt;/a>&lt;/li>
+  {%- endfor %}
+  &lt;/ul>
+&lt;/section></code></pre>
