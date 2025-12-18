@@ -1,6 +1,7 @@
 import { feedPlugin } from '@11ty/eleventy-plugin-rss';
 import { JSDOM } from 'jsdom';
 import slugify from '@sindresorhus/slugify';
+import tags from './tags.js';
 
 export default function (eleventyConfig) {
   // Global data
@@ -13,25 +14,26 @@ export default function (eleventyConfig) {
 
   // Collections
   eleventyConfig.addCollection('tagsList', collectionApi => {
-    const tags = collectionApi.getAll()
+    const knownTags = new Set(tags);
+    const foundTags = collectionApi.getAll()
       .flatMap(item => item.data.tags || [])
       .reduce((acc, tag) => {
         acc.add(tag);
         return acc;
       }, new Set());
-    tags.delete('articles');
+    foundTags.delete('articles');
 
     // check that we know all tags and all known tags are actually used
-    if (!setEquals(knownTags, tags)) {
-      const tagsToAdd = tags.difference(knownTags);
-      const tagsToRemove = knownTags.difference(tags);
+    if (!setEquals(knownTags, foundTags)) {
+      const tagsToAdd = foundTags.difference(knownTags);
+      const tagsToRemove = knownTags.difference(foundTags);
       throw new Error(`Update list of tags! Add: ${[...tagsToAdd]} Remove: ${[...tagsToRemove]}`);
     }
-    return [...tags];
+    return [...foundTags];
   });
 
   // add templates for all tags
-  knownTags.forEach(tag => {
+  tags.forEach(tag => {
     eleventyConfig.addTemplate(`tags/${slugify(tag)}.njk`, `<p>All articles with the tag <em>${tag}</em></p>`, {
       layout: 'paged.njk',
       title: tag,
@@ -79,9 +81,3 @@ export default function (eleventyConfig) {
 function setEquals(a, b) {
   return a === b || (a.size === b.size && [...a].every((it => b.has(it))));
 }
-
-const knownTags = new Set([
-  'skateboarding',
-  'software',
-  'attention',
-]);
