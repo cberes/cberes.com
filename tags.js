@@ -1,5 +1,6 @@
 export default [
-  'attention',
+  'digital detox',
+  'eleventy',
   'skateboarding',
   'software',
 ];
