@@ -38,8 +38,8 @@ export default function (eleventyConfig) {
 
   // add templates for all tags
   knownTags.forEach(tag => {
-    eleventyConfig.addTemplate(`tags/${slugify(tag)}.njk`, `<p>All articles with the tag <em>{{ title | lower }}</em></p>`, {
-      layout: 'pages.njk',
+    eleventyConfig.addTemplate(`tags/${slugify(tag)}.njk`, `<p>All articles with the tag <em>${tag}</em></p>`, {
+      layout: 'paged.njk',
       title: tag,
       pagination: {
         data: `collections.${tag}`,
