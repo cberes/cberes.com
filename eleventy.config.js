@@ -2,10 +2,6 @@ import { feedPlugin } from '@11ty/eleventy-plugin-rss';
 import { JSDOM } from 'jsdom';
 import slugify from '@sindresorhus/slugify';
 
-function setEquals(a, b) {
-  return a === b || (a.size === b.size && [...a].every((it => b.has(it))));
-}
-
 export default function (eleventyConfig) {
   // Global data
   eleventyConfig.addGlobalData('windowTitle', 'cberes');
@@ -14,8 +10,6 @@ export default function (eleventyConfig) {
   // Copy files
   eleventyConfig.addPassthroughCopy({assets: '/'});
   eleventyConfig.addPassthroughCopy('articles/**/*.png');
-
-  const knownTags = new Set(['skateboarding', 'software', 'attention']);
 
   // Collections
   eleventyConfig.addCollection('tagsList', collectionApi => {
@@ -81,3 +75,13 @@ export default function (eleventyConfig) {
     return array.slice(0, count);
   });
 };
+
+function setEquals(a, b) {
+  return a === b || (a.size === b.size && [...a].every((it => b.has(it))));
+}
+
+const knownTags = new Set([
+  'skateboarding',
+  'software',
+  'attention',
+]);
