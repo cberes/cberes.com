@@ -15,21 +15,27 @@ export default function (eleventyConfig) {
   // Collections
   eleventyConfig.addCollection('tagsList', collectionApi => {
     const knownTags = new Set(tags);
-    const foundTags = collectionApi.getAll()
+    const tagMap = collectionApi.getAll()
       .flatMap(item => item.data.tags || [])
       .reduce((acc, tag) => {
-        acc.add(tag);
+        if (!acc.has(tag)) {
+          acc.set(tag, { name: tag, count: 0 });
+        }
+        acc.get(tag).count += 1;
         return acc;
-      }, new Set());
-    foundTags.delete('articles');
+      }, new Map());
+    tagMap.delete('articles'); // all items have this tag
 
     // check that we know all tags and all known tags are actually used
+    const foundTags = new Set(tagMap.keys());
     if (!setEquals(knownTags, foundTags)) {
       const tagsToAdd = foundTags.difference(knownTags);
       const tagsToRemove = knownTags.difference(foundTags);
       throw new Error(`Update list of tags! Add: ${[...tagsToAdd]} Remove: ${[...tagsToRemove]}`);
     }
-    return [...foundTags];
+
+    // return values only, sorted by name
+    return [...tagMap.values()].sort((a, b) => a.name.localeCompare(b.name));
   });
 
   // add templates for all tags

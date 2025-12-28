@@ -7,7 +7,7 @@ title: Tags
   <p>All tags used in articles</p>
   <ul>
   {%- for tag in collections.tagsList %}
-    <li><a href="/tags/{{ tag | slugify }}">{{ tag }}</a></li>
+    <li><a href="/tags/{{ tag.name | slugify }}">{{ tag.name }}</a>: {{ tag.count }} post{{ "" if tag.count == 1 else "s" }}</li>
   {%- endfor %}
   </ul>
 </section>
