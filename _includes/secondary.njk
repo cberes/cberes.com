@@ -22,13 +22,7 @@
   <main>
     {{ content | safe }}
   </main>
-  <footer>
-    <p>
-      &copy; 2024-2025 Corey Beres.
-      Built with <a href="https://www.11ty.dev">{{ eleventy.generator }}</a>.
-      Source available on <a href="https://github.com/cberes/cberes.com">GitHub</a>.
-    </p>
-  </footer>
+  {% include "footer.njk" -%}
 </body>
 
 </html>
