@@ -15,33 +15,29 @@ export default function (eleventyConfig) {
   // Collections
   eleventyConfig.addCollection('tagsList', collectionApi => {
     const knownTags = new Set(tags);
-    const tagMap = collectionApi.getAll()
+    const foundTags = collectionApi.getAll()
       .flatMap(item => item.data.tags || [])
       .reduce((acc, tag) => {
-        if (!acc.has(tag)) {
-          acc.set(tag, { name: tag, count: 0 });
-        }
-        acc.get(tag).count += 1;
+        acc.add(tag);
         return acc;
-      }, new Map());
-    tagMap.delete('articles'); // all items have this tag
+      }, new Set());
+      foundTags.delete('articles'); // all items have this tag
 
     // check that we know all tags and all known tags are actually used
-    const foundTags = new Set(tagMap.keys());
     if (!setEquals(knownTags, foundTags)) {
       const tagsToAdd = foundTags.difference(knownTags);
       const tagsToRemove = knownTags.difference(foundTags);
       throw new Error(`Update list of tags! Add: ${[...tagsToAdd]} Remove: ${[...tagsToRemove]}`);
     }
 
-    // return values only, sorted by name
-    return [...tagMap.values()].sort((a, b) => a.name.localeCompare(b.name));
+    return [...foundTags].sort();
   });
 
   // add templates for all tags
   tags.forEach(tag => {
-    eleventyConfig.addTemplate(`tags/${slugify(tag)}.njk`, `<p>All articles with the tag <em>${tag}</em></p>`, {
+    eleventyConfig.addTemplate(`tags/${slugify(tag)}.njk`, `<p>All articles with the tag <em>{{ tag }}</em> ({{ collections[tag].length }})</p>`, {
       layout: 'paged.njk',
+      tag,
       title: tag,
       pagination: {
         data: `collections.${tag}`,
