@@ -1,0 +1,62 @@
+---
+tags:
+  - articles
+  - javascript
+  - software
+title: Replacing Webpack/Babel in 2026
+date: 2026-01-05
+---
+<p>
+  I made a simple, mostly-JavaScript website using Webpack and Babel in 2017.
+  Nine years later I was dreading the thought of working on this project again.
+  But I found a solution.
+</p>
+<p>
+  The website is <a href="https://spinthechoice.cberes.com">Spin the Choice</a>.
+  I currently own <code>spinthechoice.com</code>, but I'm planning to let it expire.
+  Spin the Choice is a wacky game invented by the cartoon character Peggy Hill (of <em>King of the Hill</em>).
+  The rules were never made clear&mdash;one challenge was making it into an actual, playable game.
+</p>
+<p>
+  I've always been more of a back-end person&mdash;more familiar with Gradle than with however we're currently building our JavaScript projects.
+  I guess in 2017 we were using Webpack and Babel?
+  But I didn't make many projects with this setup, so I got little experience with these tools.
+</p>
+<p>
+  I thought I might want to update Spin the Choice at some point.
+  However there's the barrier of all the unfamiliar tools I used: Webpack, Babel, Bootstrap.
+</p>
+<p>
+  I learned of <a href="https://vite.dev/">Vite</a> yesterday.
+  It does everything I need for this simple website with very little configuration!
+  I swapped in Vite in two commits
+</p>
+<ol>
+  <li><a href="https://github.com/cberes/spin-the-choice/commit/66d48045158262a01cd23ca776ce5676574e58f8">replace everything with vite</a></li>
+  <li><a href="https://github.com/cberes/spin-the-choice/commit/9e57715288d28bd5d11834a96e819d7ffc16fa99">oops add the rules page</a></li>
+</ol>
+<p>
+  First I created a project from a template:
+</p>
+<pre><code>npm create vite@latest spin-the-choice-v2 -- --template vanilla</code></pre>
+<p>
+  I moved the HTML files out of the <code>src</code> directory.
+  I added <code>type="module"</code> to the <code>script</code> tag.
+  I had to add a <code>link</code> tag for my CSS.
+  And I removed the <code>onreadystatechange</code> handler.
+</p>
+<p>
+  The one bit of configuration I needed was to list the HTML pages (see the second commit).
+  I had to update the Github actions as well.
+</p>
+<ol>
+  <li>new Node version</li>
+  <li>updated action versions</li>
+  <li>the Github Pages action finds the website in a different folder</li>
+</ol>
+<p>
+  Other than a few hiccups, the migration went very smoothly.
+  I'm glad I made the switch to Vite.
+  There's almost no boilerplate code.
+  I feel like I could revisit this project in a few years and feel much more comfortable working on it.
+</p>
