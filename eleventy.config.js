@@ -8,6 +8,9 @@ export default function (eleventyConfig) {
   eleventyConfig.addGlobalData('windowTitle', 'cberes');
   eleventyConfig.addGlobalData('siteTitle', 'Corey Beres');
 
+  // 👀
+  eleventyConfig.addWatchTarget("./articles/");
+
   // Copy files
   eleventyConfig.addPassthroughCopy({assets: '/'});
   eleventyConfig.addPassthroughCopy('articles/**/*.png');
