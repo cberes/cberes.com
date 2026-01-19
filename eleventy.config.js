@@ -13,7 +13,7 @@ export default function (eleventyConfig) {
 
   // Copy files
   eleventyConfig.addPassthroughCopy({assets: '/'});
-  eleventyConfig.addPassthroughCopy('articles/**/*.png');
+  eleventyConfig.addPassthroughCopy('articles/**/*.{png,jpg}');
 
   // Collections
   eleventyConfig.addCollection('tagsList', collectionApi => {
