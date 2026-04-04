@@ -1,0 +1,147 @@
+---
+tags:
+  - articles
+  - AI
+  - skateboarding
+  - software
+title: Vibe coding skateindex.com
+date: 2026-04-04
+---
+<p>
+I just finished my first programming project built entirely with AI-generated code.
+</p>
+<p>
+The project was <a href="https://skateindex.com">skateindex.com</a>.
+It's a static site that gives the user a list or map of skate shops around a given location.
+This also includes tools for finding skate shops in advance, downloading photos, and manually reviewing shops.
+</p>
+<h3>Claude</h3>
+<p>
+I used <a href="https://claude.com/product/claude-code">Claude code</a>.
+I got the "pro" plan, which was $20 for 1 month.
+</p>
+<p>
+I tried to use something like the Ralph Wiggum approach based on
+<a href="https://youtu.be/4Nna09dG_c0?si=jPLJRHnGc3kCQX1h">this video by Geoffrey Huntley</a>.
+This was my first time doing anything like this, so I took some liberties.
+I <em>did</em> have an implementation plan file, which I had Claude update.
+Each time I started a session, I asked it to work on the next feature on the plan.
+And the end of a session I asked it to update the plan.
+I kept a close eye on things the whole time.
+I didn't "review" all changes but I at least skimmed through everything.
+</p>
+<p>
+I mostly used Opus 4.5, though I used Opus 4.6 for a few sessions at the end of the month.
+Here are the numbers from <code>/stats</code>:
+</p>
+<ul>
+  <li>Sessions: 40</li>
+  <li>Active days: 10</li>
+  <li>Most active day: January 24</li>
+  <li>Longest session: 13 hours, 20 minutes, 4 seconds</li>
+  <li>Longest streak: 3 days</li>
+  <li>Opus 4.5: 70.7% (in: 59.9k, out: 9.1k)</li>
+  <li>Opus 4.6: 29.3% (in: 511, out: 28.1k)</li>
+</ul>
+
+<h3>The project</h3>
+<p>
+My goal with the project was to spend as little money as possible.
+That influenced many decisions, such as the static site, the choice of API,
+and the decision to build a list of shops in advance.
+</p>
+<p>
+It was a simple project. Nothing about the project is novel.
+But I wanted to implement a simple project for the purposes of learning how to use LLMs to write code.
+It was more about using the LLM than creating the website.
+</p>
+<p>
+However, the entire project wasn't easy or straightforward.
+The area I spent the most time on was ensuring we find as many skate shops as possible without false positives.
+That said, what is a skate shop? If a store sells a few longboards or completes, should it be on the list?
+If they have a deck wall and a case with individual parts, but they primarily sell snowboards, should it be on the list?
+Or do we include only core skate shops?
+</p>
+<p>
+I tried to include only shops that had more than a handful of decks in stock along with a selection of trucks and wheels,
+whether skateboards were their primary concern.
+As far as I know, it's not possible to determine this from the Places API listing.
+</p>
+<ul>
+  <li>Most stores, even core shops, don't have the skate shop type</li>
+  <li>Some skate shops have a skate-themed word in their name or website, but not all do</li>
+  <li>Searching for "skate shop" yields many false positives, including hockey stores, ski and snowboard stores, and surf shops</li>
+</ul>
+<p>
+I had other problems.
+At first, the app got only a single page of results per location.
+But sometimes there are multiple pages of results.
+Claude also struggled to figure out why shops weren't included in the results.
+</p>
+<h3>Quality results</h3>
+<p>
+I wanted the shop results to be quality.
+If the results are no better than searching Google Maps, why use my project?
+For example, see <a href="https://www.skateboards.com/skate-shops">skateboards.com</a>,
+which clearly grabbed all results for "skate shop" without filtering.
+</p>
+<p>
+I tried to do some filtering on name and website, both to include and exclude shops.
+For example, include the shop if the name contains "skateboard" but exclude it if the name contains "ice arena."
+However, this left almost a thousand shops I was unsure of.
+</p>
+<p>
+<strong>I reviewed almost a thousand shops by hand.</strong>
+I checked websites, photos, and Google Maps reviews.
+It took me about 2 months to review all of them.
+All I had was the <a href="https://github.com/cberes/skateshopfinder/blob/main/scripts/review-shops.js">review tool</a>
+that claude made to print out websites and Google Maps links.
+</p>
+<h3>What I liked</h3>
+<p>
+The LLM successfully completed the project.
+Furthermore, it was a project that I might not have found the time to work on.
+Claude built a functional website that looks decent.
+The basic website was working within just a few sessions.
+</p>
+<p>
+It helped me make some decisions about how to implement the project.
+This was helpful for parts of the app I was unfamiliar with, like the Google Places API and JavaScript tools.
+The LLM suggested features I might not have thought of, like shareable URLs.
+It handled parts of the app that I might have struggled with, like CSS.
+</p>
+<h3>What I didn't like</h3>
+
+<ul>
+  <li>I spent $38 because the LLM got the Google Places free tier wrong.
+    It claimed I could make 5000 free requests, when actually I was limited to 1000 requests.</li>
+  <li>The first attempt at filtering skateshops was very slow.</li>
+  <li>There were several bugs in the code. Humans write bugs, too. But don't think that AI is perfect.</li>
+  <li>I asked Claude to write tests each time it made changes. Sometimes those tests were useless and I had it remove them.</li>
+  <li>While it handled things I'm not very strong with like CSS, that means I gained no experience working in those areas.</li>
+  <li>I don't know the code very well. It's like looking at code that someone else wrote.</li>
+  <li>Either I abandon the project, I keep paying for Claude, or I need to spend extra time reviewing the code before adding features or fixing bugs.</li>
+</ul>
+
+<h3>Would I do it again</h3>
+<p>
+I would try this approach again, but only under certain circumstances.
+I would do this again if I thought the project could generate revenue,
+but I wasn't particularly interested in solving any of the problems involved.
+</p>
+<p>
+I usually enjoy writing code.
+Even with mundane parts of programming, there are decisions to make and things to think about.
+However, using the LLM wasn't programming. I was delegating work to it.
+</p>
+<p>
+I have the project to show for it, but it feels like someone else did the work.
+What could have been a labor of love was neither labor nor love.
+</p>
+<p>
+I do like using LLMs for certain parts of programming.
+It can be very useful setting up a project skeleton.
+It's great for answering questions about things I'm unfamiliar with, like JavaScript libraries and build tools for example.
+It can be good to bounce ideas off it&mdash;sometimes the LLM considers aspects of design decisions that I haven't.
+But I would prefer using the LLM as a tool to help me with a project rather than using it to do the entire project.
+</p>
