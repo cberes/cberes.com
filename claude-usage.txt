@@ -1,0 +1,46 @@
+      Apr May Jun Jul Aug Sep Oct Nov Dec Jan Feb Mar
+      ··········································█▒▒·······
+  Mon ··········································▓█░·······
+      ··········································█·········
+  Wed ····················································
+      ····················································
+  Fri ············································▒·······
+      ············································▓······
+
+      Less ░ ▒ ▓ █ More
+
+  All time · Last 7 days · Last 30 days
+
+  Favorite model: Opus 4.5        Total tokens: 97.6k
+
+  Sessions: 40                    Longest session: 13h 20m 4s
+  Active days: 10/71              Longest streak: 3 days
+  Most active day: Jan 24         Current streak: 0 days
+
+  You've used ~4x more tokens than The Little Prince
+
+  Esc to cancel · r to cycle dates · ctrl+s to copy
+
+
+  Tokens per Day                                     
+     56k ┼────╮                                           
+     49k ┤    │                                           
+     42k ┤    │                                           
+     35k ┤    │                                           
+     28k ┤    │                                  ╭────    
+     21k ┤    │                                  │        
+     14k ┤    │                                  │       
+      7k ┤    ╰─────────╮                        │
+       0 ┼───────────────────────────────────────╯────
+          Jan 24       Jan 26       Feb 7        Feb 12
+  ● Opus 4.5 · ● Opus 4.6              
+
+  All time · Last 7 days · Last 30 days              
+
+  ● Opus 4.5 (70.7%)                      ● Opus 4.6 (29.3%) 
+    In: 59.9k · Out: 9.1k                   In: 511 · Out: 28.1k
+                                                        
+  Esc to cancel · r to cycle dates · ctrl+s to copy
+                                                                                        
+                                                                                        
+                                                                             
