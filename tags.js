@@ -4,6 +4,7 @@ export default [
   'eleventy',
   'javascript',
   'perl',
+  'python',
   'skateboarding',
   'software',
 ];
