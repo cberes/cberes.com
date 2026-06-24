@@ -3,7 +3,7 @@ all: build
 build:
 	npx @11ty/eleventy
 
-dev:
+serve:
 	npx @11ty/eleventy --serve
 
 init:
