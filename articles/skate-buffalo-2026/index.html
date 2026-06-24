@@ -1,0 +1,119 @@
+---
+tags:
+- articles
+- hugo
+- skateboarding
+- software
+title: "Skate Buffalo: 2026 update"
+date: 2026-06-24
+---
+<p>
+  I followed up my Skatelog project with updates to my
+  <a href="https://gohugo.io/">Hugo</a>-powered website:
+  <a href="https://skatebuffalo.com/">Skate Buffalo</a>.
+  I had barely touched it for almost two years.
+  I used to be well-versed in Hugo&mdash;I made an entire theme in the
+  past&mdash;but that was eight years ago.
+</p>
+<p>
+  My first task was updating the Hugo version and the theme.
+  Somewhere in the process I learned about Hugo modules.
+  So, I removed the submodule I had for the theme, and replaced it with a submodule.
+  I was prepared for many errors between this and the version update, but it was painless.
+</p>
+<p>
+  Next I worked on the map.
+  Originally I made a custom Google Map for the website.
+  Since I used Leaflet with <a href="https://skateindex.com">Skate Index</a>,
+  I wanted to replace the map with Leaflet.
+</p>
+<p>
+  The advantage to Leaflet was that I could have skateparks added to the map automatically
+  (and removed from it). Also I could do additional styling.
+  The downside is it's more to manage in the project.
+  I had example code to use, so this part was straightforward.
+</p>
+<p>
+  Now I had two external libraries that Skate Buffalo uses:
+  <a href="https://leafletjs.com/">Leaflet</a> and <a href="https://flickity.metafizzy.co/">Flickity</a>.
+  To keep things simple I added the Javascript and CSS files to my repo.
+  But it bugged me that it made the Github languages visualization incorrect.
+  Thus, I removed the vendor files and wrote a script to download them.
+  It's just <code>curl</code>, <code>unzip</code>, and <code>mv</code>.
+  Also I gitignored the directory I downloaded them to, so I don't need to download the files all the time.
+</p>
+<p>
+  One thing that always <em>annoyed</em> me about Skate Buffalo was that the photo carousel showed up in the skatepark
+  summary.
+  The result is the skateparks list has 10 photo carousels.
+  I think it's reasonable to expect visitors to click a link to get to the carousel.
+  I put this off in the past, but it was easy to fix.
+  I already have a shortcode for the carousel.
+  I added the featured image to the shortcode.
+  Then I used CSS to hide the carousel everywhere except the individual skatepark page.
+  And the featured image is visible only on the skatepark list page.
+</p>
+<p>
+  One thing that <em>worried</em> me about Skate Buffalo was that all the photos were 4K.
+  I was worried that users would accidentally use a gigabyte of data browsing skateparks.
+  The obvious solution is to re-size the photos in the repo.
+  <em>But</em> I like having the full-size photos available.
+  In a way I kind of punted this problem.
+  I added a script to the deployment pipeline that uses
+  <a href="https://imagemagick.org/">ImageMagick</a> to resize the images to 1080p.
+  Yes the repo is still bloated and it added more time to the deployment job,
+  but that worries me less than unnecessarily huge photos on the live website.
+</p>
+<p>
+  I added photos of skateparks in Ontario, the southern tier, and Rochester.
+  I really wasn't sure about this.
+  After all, the website is Skate <em>Buffalo</em>.
+  On the other hand, I'm a Buffalo skateboarder, and I was curious about these skateparks.
+  Plus, people using the website may be in Batavia, or Lewiston, or Gowanda.
+  They may be closer to Jamestown or Brockport than to Amherst.
+  If that's not justification enough, I also added new tags,
+  so that visitors could see only the original list of skateparks if that's what they want.
+</p>
+<p>
+  In addition to the new skateparks, I updated the existing skateparks.
+  For example, the old Hamburg skatepark has been dismantled.
+  I removed it.
+  And I removed tags from defunct skateparks, so the tags list is more reliable.
+</p>
+<p>
+  The list of skateshops on the Map page felt sloppy to me.
+  First, it was on the Map page. It didn't feel like a good spot for it.
+  I made two changes related to this.
+  I added a data file with local skateshops.
+  I use this data to populate the map.
+  Also I use it to populate the new Shops page.
+  Instead of a table, I made a list of cards.
+  This task required the most learning.
+  I had to learn how to combine pages from the skatepark list and elements of data
+  into a single list, so I could sort them all by title.
+  And I knew nothing about Hugo data before this.
+  Also I added two new shortcodes: a website shortcode and a shops-list shortcode.
+  I think it looks a lot better than the table.
+</p>
+<p>
+  Sadly the <a href="https://github.com/gohugo-ananke/ananke">Ananke</a> theme has no dark mode.
+  I tried the <a href="https://github.com/CaiJimmy/hugo-theme-stack">Stack</a> theme.
+  I hoped it would be just a matter of changing the theme.
+  However, I had to make a bunch of changes:
+  replacing featured_image with image,
+  setting skateparks to be the main section,
+  changing the partial used for custom CSS and Javascript,
+  and undoing the photo carousel changes I made.
+  I think it looks nice, but I'm not ready to commit to it.
+</p>
+<p>
+  I ended up making my own dark "theme" for Ananke.
+  I'm not sure it looks very good.
+  But hopefully it's an improvement over a white background.
+</p>
+<p>
+  That's everything so far!
+  I have no more changes planned,
+  but I might think of something.
+  I'm still not sure what my next project will be after this.
+</p>
