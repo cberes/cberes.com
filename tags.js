@@ -6,6 +6,7 @@ export default [
   'javascript',
   'perl',
   'python',
+  'radio',
   'skateboarding',
   'software',
 ];
