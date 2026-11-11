@@ -2,6 +2,10 @@
 
 My (Corey Beres) personal homepage at https://cberes.com.
 
+## Project moved
+
+The project has moved to [Codeberg](https://codeberg.org/cberes/cberes).
+
 ## Building
 
 You need [Node.js](https://nodejs.org).
